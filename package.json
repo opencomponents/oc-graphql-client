@@ -6,8 +6,8 @@
   "author": "Chris Cartlidge <ccartlidge@opentable.com>",
   "license": "MIT",
   "scripts": {
-    "jshint": "eslint index.js",
-    "test": "npm run jshint && mocha"
+    "lint": "eslint index.js",
+    "test": "npm run lint && mocha tests"
   },
   "dependencies": {
     "apollo-client": "^0.8.6",
