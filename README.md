@@ -26,10 +26,7 @@ registry.register({
   register: require('oc-graphql-client'),
   options: {
     host: 'http://graphql-server.hosts.com',
-    batchInterval: 10,
-    errorHandler: function(err){
-      console.log(err);
-    }
+    batchInterval: 10
   }
 }, function(err){
   if(err){
@@ -66,7 +63,6 @@ module.exports.data = function(context, callback){
 
 |parameter|type|mandatory|description|
 |---------|----|---------|-----------|
-|errorHandler|`function`|no|The error handler|
 |serverUrl|`string`|yes|The Url for the GraphQL server|
 |batchInterval|`number`|no|The default is a 10ms window for batching queries|
 
