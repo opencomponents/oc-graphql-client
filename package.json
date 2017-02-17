@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "Chris Cartlidge <ccartlidge@opentable.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opentable/oc-graphql-client",
+  },
   "scripts": {
     "lint": "eslint index.js",
     "test": "npm run lint && mocha tests"
