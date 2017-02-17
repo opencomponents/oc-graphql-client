@@ -1,4 +1,4 @@
-oc-graphql-client
+oc-graphql-client [![Build Status](https://travis-ci.org/opentable/oc-graphql-client.svg?branch=master)](https://travis-ci.org/opentable/oc-graphql-client)
 ==========
 
 A OpenComponents plugin that expose the [Apollo-Client](http://dev.apollodata.com/) for interacting with a GraphQL based server.
