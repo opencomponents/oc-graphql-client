@@ -6,6 +6,7 @@ A OpenComponents plugin that expose the [Apollo-Client](http://dev.apollodata.co
 ## Requirements:
 - OC Registry
 - GraphQL Server
+- Node >= v6
 
 ## Install
 
