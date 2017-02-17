@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const expect  = require('chai').expect;
 const injectr = require('injectr');
 const sinon = require('sinon');
 
