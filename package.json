@@ -10,8 +10,11 @@
     "url": "https://github.com/opentable/oc-graphql-client"
   },
   "scripts": {
-    "lint": "eslint index.js",
+    "lint": "eslint index.js --ignore-pattern tests/*.js",
     "test": "npm run lint && mocha tests"
+  },
+  "eslintConfig": {
+    "extends": "airbnb"
   },
   "dependencies": {
     "apollo-client": "^0.8.6",
