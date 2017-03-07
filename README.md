@@ -49,13 +49,17 @@ Example for a components' server.js:
 ````javascript
 
 module.exports.data = function(context, callback){
-  let qb = context.plugins.graphql.queryBuilder;
+  const qb = context.plugins.graphql.queryBuilder;
 
-  let query = qb`restaurant(id: 4) {
+  const query = qb`restaurant(id: 4) {
     name
   }`;
 
-  context.plugins.graphql.query({query})
+  const headers = {
+    'accept-language': 'en-US, en'
+  };
+
+  context.plugins.graphql.query(query, headers)
     .then(res => { ... })
     .catch(err => { ... })
 ````

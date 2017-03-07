@@ -1,6 +1,6 @@
 {
   "name": "oc-graphql-client",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "OpenComponents Apollo client plugin for GraphQL",
   "main": "index.js",
   "author": "Chris Cartlidge <ccartlidge@opentable.com>",
@@ -16,10 +16,10 @@
   "dependencies": {
     "apollo-client": "^0.8.6",
     "graphql-tag": "^1.2.4",
+    "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.4"
   },
   "devDependencies": {
-    "mocha": "^3.2.0",
     "chai": "^3.5.0",
     "eslint": "^3.15.0",
     "eslint-config-airbnb": "^14.1.0",
@@ -27,6 +27,7 @@
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
     "injectr": "^0.5.1",
+    "mocha": "^3.2.0",
     "sinon": "^1.17.7"
   }
 }

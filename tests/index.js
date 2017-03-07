@@ -8,8 +8,14 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
     query: () => { },
   });
 
+  const mockCreateBatchingNetworkInterface = sinon
+    .stub()
+    .returns({
+      use: () => { }
+    });
+
   const clientMock = {
-    createBatchingNetworkInterface: sinon.stub(),
+    createBatchingNetworkInterface: mockCreateBatchingNetworkInterface,
     ApolloClient: apollo
   };
 
@@ -40,7 +46,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
       });
     });
 
-    it('shoudl not return an error', () => {
+    it('should not return an error', () => {
       expect(error).to.be.undefined;
     });
   });
@@ -89,7 +95,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
       expect(client).to.have.property('query');
     });
 
-    it('should expise a queryBuilder method', () => {
+    it('should expose a queryBuilder method', () => {
       expect(client).to.have.property('queryBuilder');
     });
   });
