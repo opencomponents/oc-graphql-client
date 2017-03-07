@@ -1,6 +1,6 @@
 {
   "name": "oc-graphql-client",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "OpenComponents Apollo client plugin for GraphQL",
   "main": "index.js",
   "author": "Chris Cartlidge <ccartlidge@opentable.com>",

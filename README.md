@@ -51,7 +51,7 @@ Example for a components' server.js:
 module.exports.data = function(context, callback){
   const qb = context.plugins.graphql.queryBuilder;
 
-  const query = qb`restaurant(id: 4) {
+  const query = qb`restaurant(id: $id) {
     name
   }`;
 
@@ -59,7 +59,7 @@ module.exports.data = function(context, callback){
     'accept-language': 'en-US, en'
   };
 
-  context.plugins.graphql.query(query, headers)
+  context.plugins.graphql.query({ query, variables: { id: 4 } }, headers)
     .then(res => { ... })
     .catch(err => { ... })
 ````

@@ -4,8 +4,9 @@ const sinon = require('sinon');
 
 describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   // Mocking constructors is messy.
+  const queryMock = sinon.stub();
   const apollo = sinon.stub({ ApolloClient: () => { } }, 'ApolloClient').returns({
-    query: () => { },
+    query: queryMock,
   });
 
   const mockCreateBatchingNetworkInterface = sinon
@@ -97,6 +98,22 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
 
     it('should expose a queryBuilder method', () => {
       expect(client).to.have.property('queryBuilder');
+    });
+  });
+  describe('when calling query with headers', () => {
+
+    beforeEach((done) => {
+      plugin.register({ batchInterval: 25, serverUrl: 'http://graphql' }
+        , {}, () => {
+          const client = plugin.execute();
+          client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' });
+          done();
+        });
+    });
+
+    it('should call apollo client with merged headers', () => {
+      const expectedResult = { query: {}, variables: { test: 1, __headers: { 'accept-language': 'en-US' } } };
+      expect(queryMock.calledWith(expectedResult)).to.be.true;
     });
   });
 });

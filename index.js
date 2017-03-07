@@ -7,6 +7,9 @@ require('isomorphic-fetch'); // eslint-disable-line global-require
 
 let client;
 
+const mergeHeaderArguments = (options, headers) =>
+  _.merge(options, { variables: { __headers: headers } });
+
 module.exports.register = (opts, dependencies, next) => { // eslint-disable-line consistent-return
   if (opts.batchInterval && !_.isInteger(opts.batchInterval)) {
     return next(new Error('The batchInterval parameter is invalid'));
@@ -35,6 +38,6 @@ module.exports.register = (opts, dependencies, next) => { // eslint-disable-line
 };
 
 module.exports.execute = () => ({
-  query: (query, headers) => client.query({ query, variables: { __headers: headers } }),
+  query: (options, headers) => client.query(mergeHeaderArguments(options, headers)),
   queryBuilder: gql,
 });
