@@ -47,6 +47,13 @@ registry.register({
 registry.start(callback);
 ````
 
+
+## Register API
+
+|parameter|type|mandatory|description|
+|---------|----|---------|-----------|
+|serverUrl|`string`|yes|The Url for the GraphQL server|
+
 ## Usage
 
 Example for a components' server.js:
@@ -65,7 +72,7 @@ module.exports.data = function(context, callback){
     'accept-language': 'en-US, en'
   };
 
-  context.plugins.graphql.query({ query, variables: { id: 4 } }, headers)
+  context.plugins.graphql.query({ query, variables: { id: 4 } }, headers, timeout)
     .then(res => { ... })
     .catch(err => { ... })
 ````
@@ -74,7 +81,9 @@ module.exports.data = function(context, callback){
 
 |parameter|type|mandatory|description|
 |---------|----|---------|-----------|
-|serverUrl|`string`|yes|The Url for the GraphQL server|
+|options|`object`|yes|A composite of the query & variables to pass to GraphQL server|
+|headers|`object`|no|The headers to pass down to unerlying services|
+|timeout|`int`|no|The timeout in ms by default this is disabled |
 
 ## Contributing
 

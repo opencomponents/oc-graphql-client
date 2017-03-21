@@ -78,7 +78,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   describe('when calling query and endpoint fails', () => {
     let client;
     const plugin = injectr('../index.js', {
-      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ status: 500, statusText: 'Failure' }))
+      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ ok: false, statusText: 'Failure' }))
     });
 
     beforeEach((done) => {
@@ -100,7 +100,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   describe('when calling query successfully', () => {
     let client;
     const plugin = injectr('../index.js', {
-      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ status: 200, json: () => Promise.resolve('PASSED') }))
+      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ ok: true, json: () => Promise.resolve('PASSED') }))
     });
 
     beforeEach((done) => {

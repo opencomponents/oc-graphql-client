@@ -14,7 +14,7 @@ const createQuery = (query, variables) => {
 };
 
 const checkResponseStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.ok) {
     return response;
   }
 
@@ -30,13 +30,13 @@ module.exports.register = (opts, dependencies, next) => { // eslint-disable-line
     return next(new Error('The serverUrl parameter is invalid'));
   }
 
-  client = (options, headers) => fetch(opts.serverUrl, {
+  client = (options, headers, timeout) => fetch(opts.serverUrl, {
     method: 'POST',
     headers: _.extend(
       {
         'Content-Type': 'application/json',
         'User-Agent': 'oc',
-      }, headers),
+      }, headers, timeout),
 
     body: createQuery(options.query, options.variables),
   }).then(checkResponseStatus)
@@ -46,5 +46,5 @@ module.exports.register = (opts, dependencies, next) => { // eslint-disable-line
 };
 
 module.exports.execute = () => ({
-  query: (options, headers) => client(options, headers),
+  query: (options, headers, timeout) => client(options, headers, timeout),
 });
