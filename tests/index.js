@@ -3,45 +3,15 @@ const injectr = require('injectr');
 const sinon = require('sinon');
 
 describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
-  // Mocking constructors is messy.
-  const queryMock = sinon.stub();
-  const apollo = sinon.stub({ ApolloClient: () => { } }, 'ApolloClient').returns({
-    query: queryMock,
-  });
-
-  const mockCreateBatchingNetworkInterface = sinon
-    .stub()
-    .returns({
-      use: () => { }
-    });
-
-  const clientMock = {
-    createBatchingNetworkInterface: mockCreateBatchingNetworkInterface,
-    ApolloClient: apollo
-  };
-
-  const plugin = injectr('../index.js', {
-    'apollo-client': clientMock
-  });
-
-  describe('when calling register with an invalid batchInterval', () => {
-    let error;
-    beforeEach((done) => {
-      plugin.register({ batchInterval: '10', serverUrl: 'http://graphql' }, {}, (err) => {
-        error = err;
-        done();
-      });
-    });
-
-    it('should return an error saying batchInterval is invalid', () => {
-      expect(error.toString()).to.contain('The batchInterval parameter is invalid');
-    });
-  });
 
   describe('when calling register with an valid batchInterval', () => {
+    const plugin = injectr('../index.js', {
+      'fetch': (url, options) => { }
+    });
+
     let error;
     beforeEach((done) => {
-      plugin.register({ batchInterval: 25, serverUrl: 'http://graphql' }, {}, (err) => {
+      plugin.register({ serverUrl: 'http://graphql' }, {}, (err) => {
         error = err;
         done();
       });
@@ -53,9 +23,12 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   });
 
   describe('when calling register with no serverUrl', () => {
+    const plugin = injectr('../index.js', {
+      'fetch': (url, options) => { }
+    });
     let error;
     beforeEach((done) => {
-      plugin.register({ batchInterval: 25 }, {}, (err) => {
+      plugin.register({}, {}, (err) => {
         error = err;
         done();
       });
@@ -67,25 +40,30 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   });
 
   describe('when calling with the correct options', () => {
+    const plugin = injectr('../index.js', {
+      'fetch': (url, options) => { }
+    });
+    const next = sinon.spy();
+
     beforeEach((done) => {
       plugin.register({
-        batchInterval: 25, serverUrl: 'http://graphql'
-      }, {}, done);
+        serverUrl: 'http://graphql'
+      }, {}, next);
+      done();
     });
 
-    it('should call createBatchingNetworkInterface', () => {
-      expect(clientMock.createBatchingNetworkInterface.called).to.be.true;
-    });
-
-    it('should call ApolloClient', () => {
-      expect(clientMock.ApolloClient.called).to.be.true;
+    it('should call next', () => {
+      expect(next.called).to.be.true;
     });
   });
 
-  describe('when calling excute', () => {
+  describe('when calling execute', () => {
+    const plugin = injectr('../index.js', {
+      'fetch': (url, options) => { }
+    });
     let client;
     beforeEach((done) => {
-      plugin.register({ batchInterval: 25, serverUrl: 'http://graphql' }
+      plugin.register({ serverUrl: 'http://graphql' }
         , {}, () => {
           client = plugin.execute();
           done();
@@ -95,25 +73,49 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
     it('should expose a query method', () => {
       expect(client).to.have.property('query');
     });
-
-    it('should expose a queryBuilder method', () => {
-      expect(client).to.have.property('queryBuilder');
-    });
   });
-  describe('when calling query with headers', () => {
+
+  describe('when calling query and endpoint fails', () => {
+    let client;
+    const plugin = injectr('../index.js', {
+      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ status: 500, statusText: 'Failure' }))
+    });
 
     beforeEach((done) => {
-      plugin.register({ batchInterval: 25, serverUrl: 'http://graphql' }
+      plugin.register({ serverUrl: 'http://graphql' }
         , {}, () => {
-          const client = plugin.execute();
-          client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' });
+          client = plugin.execute();
           done();
         });
     });
 
-    it('should call apollo client with merged headers', () => {
-      const expectedResult = { query: {}, variables: { test: 1, __headers: { 'accept-language': 'en-US' } } };
-      expect(queryMock.calledWith(expectedResult)).to.be.true;
+    it('should return a failure message', (done) => {
+      client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
+        .catch(error => {
+          expect(error.message).to.equal('Failure')
+        }).then(done, done)
+    });
+  });
+
+  describe('when calling query successfully', () => {
+    let client;
+    const plugin = injectr('../index.js', {
+      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ status: 200, json: () => Promise.resolve('PASSED') }))
+    });
+
+    beforeEach((done) => {
+      plugin.register({ serverUrl: 'http://graphql' }
+        , {}, () => {
+          client = plugin.execute();
+          done();
+        });
+    });
+
+    it('should return a failture message', (done) => {
+      client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
+        .then(res => {
+          expect(res).to.equal('PASSED')
+        }).then(done, done)
     });
   });
 });

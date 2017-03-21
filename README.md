@@ -1,7 +1,13 @@
 oc-graphql-client [![Build Status](https://travis-ci.org/opentable/oc-graphql-client.svg?branch=master)](https://travis-ci.org/opentable/oc-graphql-client)
 ==========
 
-A OpenComponents plugin that expose the [Apollo-Client](http://dev.apollodata.com/) for interacting with a GraphQL based server.
+## NOTICE!
+- The current released version (3.*) does not use the Apollo client due to memory consumption issues.
+- The client does not expose a querybuilder, instead just use a raw string as the examples does.
+
+----
+
+A OpenComponents plugin that expose the a graphql client for interacting with a GraphQL based server.
 
 ## Requirements:
 - OC Registry
@@ -26,8 +32,7 @@ registry.register({
   name: 'graphqlClient',
   register: require('oc-graphql-client'),
   options: {
-    host: 'http://graphql-server.hosts.com',
-    batchInterval: 10
+    host: 'http://graphql-server.hosts.com'
   }
 }, function(err){
   if(err){
@@ -49,10 +54,11 @@ Example for a components' server.js:
 ````javascript
 
 module.exports.data = function(context, callback){
-  const qb = context.plugins.graphql.queryBuilder;
-
-  const query = qb`restaurant(id: $id) {
-    name
+  const query = `
+  query restaurantInfo(id: Int!) {
+      restaurant(id: $id) {
+        name
+    }
   }`;
 
   const headers = {
@@ -69,7 +75,6 @@ module.exports.data = function(context, callback){
 |parameter|type|mandatory|description|
 |---------|----|---------|-----------|
 |serverUrl|`string`|yes|The Url for the GraphQL server|
-|batchInterval|`number`|no|The default is a 10ms window for batching queries|
 
 ## Contributing
 
