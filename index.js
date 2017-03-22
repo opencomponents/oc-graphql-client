@@ -32,11 +32,12 @@ module.exports.register = (opts, dependencies, next) => { // eslint-disable-line
 
   client = (options, headers, timeout) => fetch(opts.serverUrl, {
     method: 'POST',
+    timeout,
     headers: _.extend(
       {
         'Content-Type': 'application/json',
         'User-Agent': 'oc',
-      }, headers, timeout),
+      }, headers),
 
     body: createQuery(options.query, options.variables),
   }).then(checkResponseStatus)

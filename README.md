@@ -62,7 +62,7 @@ Example for a components' server.js:
 
 module.exports.data = function(context, callback){
   const query = `
-  query restaurantInfo(id: Int!) {
+  query restaurantInfo($id: Int!) {
       restaurant(id: $id) {
         name
     }
@@ -83,7 +83,7 @@ module.exports.data = function(context, callback){
 |---------|----|---------|-----------|
 |options|`object`|yes|A composite of the query & variables to pass to GraphQL server|
 |headers|`object`|no|The headers to pass down to unerlying services|
-|timeout|`int`|no|The timeout in ms by default this is disabled |
+|timeout|`int`|no|The timeout in ms. It defaults to OS default |
 
 ## Contributing
 
