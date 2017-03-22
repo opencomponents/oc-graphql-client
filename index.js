@@ -1,43 +1,50 @@
-const { ApolloClient, createBatchingNetworkInterface } = require('apollo-client');
-const gql = require('graphql-tag');
+const fetch = require('isomorphic-fetch');
 const _ = require('lodash');
-
-// Pollyfill: https://github.com/apollographql/apollo-client/issues/1225
-require('isomorphic-fetch'); // eslint-disable-line global-require
 
 let client;
 
-const mergeHeaderArguments = (options, headers) =>
-  _.merge(options, { variables: { __headers: headers } });
+const createQuery = (query, variables) => {
+  const body = {
+    query,
+    variables,
+    operationName: null,
+  };
 
-module.exports.register = (opts, dependencies, next) => { // eslint-disable-line consistent-return
-  if (opts.batchInterval && !_.isInteger(opts.batchInterval)) {
-    return next(new Error('The batchInterval parameter is invalid'));
+  return JSON.stringify(body);
+};
+
+const checkResponseStatus = (response) => {
+  if (response.ok) {
+    return response;
   }
 
+  const error = new Error(response.statusText);
+  error.response = response;
+  throw error;
+};
+
+const parseResponse = response => response.json();
+
+module.exports.register = (opts, dependencies, next) => { // eslint-disable-line consistent-return
   if (!opts.serverUrl) {
     return next(new Error('The serverUrl parameter is invalid'));
   }
 
-  const options = { uri: opts.serverUrl, batchInterval: opts.batchInterval || 10 };
-  const networkInterface = createBatchingNetworkInterface(options);
+  client = (options, headers, timeout) => fetch(opts.serverUrl, {
+    method: 'POST',
+    headers: _.extend(
+      {
+        'Content-Type': 'application/json',
+        'User-Agent': 'oc',
+      }, headers, timeout),
 
-  networkInterface.use([{
-    applyMiddleware(req, done) {
-      if (!req.options.headers) {
-        // eslint-disable-next-line
-        req.options.headers = req.request.variables.__headers;
-      }
-      done();
-    },
-  }]);
-
-  client = new ApolloClient({ networkInterface, queryDeduplication: true });
+    body: createQuery(options.query, options.variables),
+  }).then(checkResponseStatus)
+    .then(parseResponse);
 
   next();
 };
 
 module.exports.execute = () => ({
-  query: (options, headers) => client.query(mergeHeaderArguments(options, headers)),
-  queryBuilder: gql,
+  query: (options, headers, timeout) => client(options, headers, timeout),
 });

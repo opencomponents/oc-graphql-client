@@ -1,7 +1,7 @@
 {
   "name": "oc-graphql-client",
-  "version": "2.1.0",
-  "description": "OpenComponents Apollo client plugin for GraphQL",
+  "version": "3.0.0",
+  "description": "OpenComponents client plugin for GraphQL",
   "main": "index.js",
   "author": "Chris Cartlidge <ccartlidge@opentable.com>",
   "license": "MIT",
@@ -14,8 +14,6 @@
     "test": "npm run lint && mocha tests"
   },
   "dependencies": {
-    "apollo-client": "^0.8.6",
-    "graphql-tag": "^1.2.4",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.4"
   },
