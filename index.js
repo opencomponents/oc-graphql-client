@@ -1,51 +1,37 @@
-const fetch = require('isomorphic-fetch');
+const http = require('http');
+const request = require('request');
 const _ = require('lodash');
 
-let client;
+let settings;
 
-const createQuery = (query, variables) => {
-  const body = {
-    query,
-    variables,
-    operationName: null,
-  };
-
-  return JSON.stringify(body);
-};
-
-const checkResponseStatus = (response) => {
-  if (response.ok) {
-    return response;
-  }
-
-  const error = new Error(response.statusText);
-  error.response = response;
-  throw error;
-};
-
-const parseResponse = response => response.json();
-
-module.exports.register = (opts, dependencies, next) => { // eslint-disable-line consistent-return
+module.exports.register = (opts, dependencies, next) => {
   if (!opts.serverUrl) {
     return next(new Error('The serverUrl parameter is invalid'));
   }
 
-  client = (options, headers, timeout) => fetch(opts.serverUrl, {
-    method: 'POST',
-    timeout,
-    headers: _.extend(
-      {
-        'Content-Type': 'application/json',
-        'User-Agent': 'oc',
-      }, headers),
-
-    body: createQuery(options.query, options.variables),
-  }).then(checkResponseStatus)
-    .then(parseResponse);
-
-  next();
+  settings = opts;
+  return next();
 };
 
 module.exports.execute = () => ({
-  query: (options, headers, timeout) => client(options, headers, timeout),
+  query: (options, headers, timeout) => new Promise((resolve, reject) => request({
+    body: {
+      query: options.query,
+      variables: options.variables,
+      operationName: null,
+    },
+    headers: _.extend({ 'User-Agent': 'oc' }, headers),
+    json: true,
+    method: 'POST',
+    timeout,
+    url: settings.serverUrl,
+  }, (err, result, body) => {
+    if (err) {
+      return reject(new Error(err));
+    } else if (result.statusCode !== 200) {
+      return reject(new Error(http.STATUS_CODES[result.statusCode]));
+    }
+
+    return resolve(body);
+  })),
 });

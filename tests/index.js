@@ -6,7 +6,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
 
   describe('when calling register with an valid batchInterval', () => {
     const plugin = injectr('../index.js', {
-      'fetch': (url, options) => { }
+      request: sinon.stub().yields(null, {}, 'ok')
     });
 
     let error;
@@ -24,7 +24,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
 
   describe('when calling register with no serverUrl', () => {
     const plugin = injectr('../index.js', {
-      'fetch': (url, options) => { }
+      request: sinon.stub().yields(null, {}, 'ok')
     });
     let error;
     beforeEach((done) => {
@@ -41,7 +41,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
 
   describe('when calling with the correct options', () => {
     const plugin = injectr('../index.js', {
-      'fetch': (url, options) => { }
+      request: sinon.stub().yields(null, {}, 'ok')
     });
     const next = sinon.spy();
 
@@ -59,7 +59,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
 
   describe('when calling execute', () => {
     const plugin = injectr('../index.js', {
-      'fetch': (url, options) => { }
+      request: sinon.stub().yields(null, {}, 'ok')
     });
     let client;
     beforeEach((done) => {
@@ -78,7 +78,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   describe('when calling query and endpoint fails', () => {
     let client;
     const plugin = injectr('../index.js', {
-      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ ok: false, statusText: 'Failure' }))
+      request: sinon.stub().yields(null, { statusCode: 500}, {})
     });
 
     beforeEach((done) => {
@@ -92,7 +92,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
     it('should return a failure message', (done) => {
       client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
         .catch(error => {
-          expect(error.message).to.equal('Failure')
+          expect(error.message).to.equal('Internal Server Error')
         }).then(done, done)
     });
   });
@@ -100,7 +100,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   describe('when calling query successfully', () => {
     let client;
     const plugin = injectr('../index.js', {
-      'isomorphic-fetch': sinon.stub().returns(Promise.resolve({ ok: true, json: () => Promise.resolve('PASSED') }))
+      request: sinon.stub().yields(null, { statusCode: 200}, { someJson: true })
     });
 
     beforeEach((done) => {
@@ -114,7 +114,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
     it('should return a failture message', (done) => {
       client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
         .then(res => {
-          expect(res).to.equal('PASSED')
+          expect(res).to.eql({ someJson: true })
         }).then(done, done)
     });
   });
