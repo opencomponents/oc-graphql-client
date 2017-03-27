@@ -7,7 +7,7 @@ oc-graphql-client [![Build Status](https://travis-ci.org/opentable/oc-graphql-cl
 
 ----
 
-A OpenComponents plugin that expose the a graphql client for interacting with a GraphQL based server.
+A [OpenComponents](https://github.com/opentable/oc) plugin that expose the a graphql client for interacting with a GraphQL based server.
 
 ## Requirements:
 - OC Registry
@@ -32,7 +32,7 @@ registry.register({
   name: 'graphqlClient',
   register: require('oc-graphql-client'),
   options: {
-    host: 'http://graphql-server.hosts.com'
+    serverUrl: 'http://graphql-server.hosts.com'
   }
 }, function(err){
   if(err){
