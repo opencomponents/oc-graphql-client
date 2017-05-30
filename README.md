@@ -1,4 +1,4 @@
-oc-graphql-client [![Build Status](https://travis-ci.org/opentable/oc-graphql-client.svg?branch=master)](https://travis-ci.org/opentable/oc-graphql-client)
+oc-graphql-client [![Build Status](https://travis-ci.org/opencomponents/oc-graphql-client.svg?branch=master)](https://travis-ci.org/opencomponents/oc-graphql-client)
 ==========
 
 ## NOTICE!
