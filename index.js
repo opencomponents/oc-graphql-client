@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const http = require('http');
 const gql = require('graphql-tag');
 const { ApolloClient, createBatchingNetworkInterface } = require('apollo-client');
 
@@ -9,7 +8,7 @@ require('isomorphic-fetch'); // eslint-disable-line global-require
 let client;
 
 const mergeHeaderArguments = (options, headers) =>
-  _.merge(options, { variables: { __headers: headers } });
+  _.merge(options, { __headers: headers } );
 
 module.exports.register = (opts, dependencies, next) => { // eslint-disable-line consistent-return
   if (opts.batchInterval && !_.isInteger(opts.batchInterval)) {
@@ -39,9 +38,9 @@ module.exports.register = (opts, dependencies, next) => { // eslint-disable-line
 };
 
 module.exports.execute = () => ({
-  //See: https://github.com/apollographql/apollo-client/issues/1419
-  query: (query, variables, headers, timeout) => client.networkInterface.query({
-      query: gql(query),
-      variables: mergeHeaderArguments(variables, headers)
-    })
+  // See: https://github.com/apollographql/apollo-client/issues/1419
+  query: (query, variables, headers) => client.networkInterface.query({
+    query: gql(query),
+    variables: mergeHeaderArguments(variables, headers),
+  }),
 });
