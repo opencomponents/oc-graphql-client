@@ -8,7 +8,7 @@ require('isomorphic-fetch'); // eslint-disable-line global-require
 let client;
 
 const mergeHeaderArguments = (options, headers) =>
-  _.merge(options, { __headers: headers } );
+  _.merge(options, { __headers: headers });
 
 module.exports.register = (opts, dependencies, next) => { // eslint-disable-line consistent-return
   if (opts.batchInterval && !_.isInteger(opts.batchInterval)) {

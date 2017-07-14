@@ -22,7 +22,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
     ApolloClient: apollo
   };
 
-  const plugin = injectr('../index.js', {
+  const plugin = injectr('../../index.js', {
     'apollo-client': clientMock
   });
 
