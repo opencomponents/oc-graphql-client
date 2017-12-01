@@ -75,10 +75,10 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
     });
   });
 
-  describe('when calling query and endpoint fails', () => {
+  describe('when calling query and endpoint fails with an invalid response', () => {
     let client;
     const plugin = injectr('../index.js', {
-      request: sinon.stub().yields(null, { statusCode: 500}, {})
+      request: sinon.stub().yields(null, { statusCode: 500}, null)
     });
 
     beforeEach((done) => {
@@ -89,10 +89,58 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
         });
     });
 
-    it('should return a failure message', (done) => {
+    it('should reject with a graphql compliant object with an error', (done) => {
+      client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
+        .catch(resp => {
+          expect(resp.errors).to.deep.equal(['Invalid response from graphql server. Internal Server Error'])
+        }).then(done, done)
+    });
+  });
+
+  describe('when calling query and recieving errors', () => {
+    let client;
+    const body = {
+      errors: [ { message: 'Field "xyz" argument "jkl" of type "Type!" is required but not provided.' } ]
+    };
+    const plugin = injectr('../index.js', {
+      request: sinon.stub().yields(null, { statusCode: 400 }, body)
+    });
+
+    beforeEach((done) => {
+      plugin.register({ serverUrl: 'http://graphql' }
+        , {}, () => {
+          client = plugin.execute();
+          done();
+        });
+    });
+
+    it('should reject with the body with errors', (done) => {
       client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
         .catch(error => {
-          expect(error.message).to.equal('Internal Server Error')
+          expect(error).to.deep.equal(body)
+        }).then(done, done)
+    });
+  });
+
+  describe('when calling query and no data', () => {
+    let client;
+    const body = {  }; // under sensible conditions, there would be errors, but the spec doesn't mandate this.
+    const plugin = injectr('../index.js', {
+      request: sinon.stub().yields(null, { statusCode: 200 }, body)
+    });
+
+    beforeEach((done) => {
+      plugin.register({ serverUrl: 'http://graphql' }
+        , {}, () => {
+          client = plugin.execute();
+          done();
+        });
+    });
+
+    it('should reject with the body', (done) => {
+      client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
+        .catch(error => {
+          expect(error).to.deep.equal(body)
         }).then(done, done)
     });
   });
@@ -100,7 +148,7 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
   describe('when calling query successfully', () => {
     let client;
     const plugin = injectr('../index.js', {
-      request: sinon.stub().yields(null, { statusCode: 200}, { someJson: true })
+      request: sinon.stub().yields(null, { statusCode: 200}, { data: {someJson: true } })
     });
 
     beforeEach((done) => {
@@ -111,10 +159,10 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
         });
     });
 
-    it('should return a failture message', (done) => {
+    it('should return the json response data', (done) => {
       client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
         .then(res => {
-          expect(res).to.eql({ someJson: true })
+          expect(res).to.eql({ data: { someJson: true } })
         }).then(done, done)
     });
   });

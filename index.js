@@ -28,8 +28,17 @@ module.exports.execute = () => ({
   }, (err, result, body) => {
     if (err) {
       return reject(new Error(err));
-    } else if (result.statusCode !== 200) {
-      return reject(new Error(http.STATUS_CODES[result.statusCode]));
+    }
+
+    if (typeof body !== 'object' || body === null) {
+      return reject({
+        errors: [`Invalid response from graphql server. ${http.STATUS_CODES[result.statusCode]}`],
+      });
+    }
+
+    // http://facebook.github.io/graphql/October2016/#sec-Errors
+    if ('errors' in body || !('data' in body)) {
+      return reject(body);
     }
 
     return resolve(body);
