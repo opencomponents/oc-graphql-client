@@ -32,7 +32,14 @@ module.exports.execute = () => ({
 
     if (typeof body !== 'object' || body === null) {
       return reject({
-        errors: [`Invalid response from graphql server. ${http.STATUS_CODES[result.statusCode]}`],
+        errors: [{
+          message: 'Invalid response from graphql server.',
+          http: {
+            status: http.STATUS_CODES[result.statusCode],
+            code: result.statusCode,
+            body,
+          },
+        }],
       });
     }
 

@@ -92,7 +92,19 @@ describe('OpenTable OC registry :: plugins :: graphql-plugin ', () => {
     it('should reject with a graphql compliant object with an error', (done) => {
       client.query({ query: {}, variables: { test: 1 } }, { 'accept-language': 'en-US' })
         .catch(resp => {
-          expect(resp.errors).to.deep.equal(['Invalid response from graphql server. Internal Server Error'])
+          expect(resp.errors).to.deep.equal([
+            {
+              // http://facebook.github.io/graphql/draft/#sec-Errors
+              // message is mandatory, other optional fields are irrelevant
+              // extra custom fields are allowed.
+              message: 'Invalid response from graphql server.',
+              http: {
+                body: null,
+                status: 'Internal Server Error',
+                code: 500
+              }
+            }
+          ])
         }).then(done, done)
     });
   });
