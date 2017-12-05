@@ -1,6 +1,6 @@
 {
   "name": "oc-graphql-client",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "OpenComponents client plugin for GraphQL",
   "main": "index.js",
   "author": "Chris Cartlidge <ccartlidge@opentable.com>",
