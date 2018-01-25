@@ -13,41 +13,45 @@ module.exports.register = (opts, dependencies, next) => {
   return next();
 };
 
-module.exports.execute = () => ({
-  query: (options, headers, timeout) => new Promise((resolve, reject) => request({
-    body: {
-      query: options.query,
-      variables: options.variables,
-      operationName: null,
-    },
-    headers: _.extend({ 'User-Agent': 'oc' }, headers),
-    json: true,
-    method: 'POST',
-    timeout,
-    url: settings.serverUrl,
-  }, (err, result, body) => {
-    if (err) {
-      return reject(new Error(err));
-    }
+module.exports.execute = (componentName) => {
+  let userAgent = componentName ? 'oc-'+componentName : 'oc';
+  
+  return {
+    query: (options, headers, timeout) => new Promise((resolve, reject) => request({
+      body: {
+        query: options.query,
+        variables: options.variables,
+        operationName: null,
+      },
+      headers: _.extend({ 'User-Agent': userAgent }, headers),
+      json: true,
+      method: 'POST',
+      timeout,
+      url: settings.serverUrl,
+    }, (err, result, body) => {
+      if (err) {
+        return reject(new Error(err));
+      }
 
-    if (typeof body !== 'object' || body === null) {
-      return reject({
-        errors: [{
-          message: 'Invalid response from graphql server.',
-          http: {
-            status: http.STATUS_CODES[result.statusCode],
-            code: result.statusCode,
-            body,
-          },
-        }],
-      });
-    }
+      if (typeof body !== 'object' || body === null) {
+        return reject({
+          errors: [{
+            message: 'Invalid response from graphql server.',
+            http: {
+              status: http.STATUS_CODES[result.statusCode],
+              code: result.statusCode,
+              body,
+            },
+          }],
+        });
+      }
 
-    // http://facebook.github.io/graphql/October2016/#sec-Errors
-    if ('errors' in body || !('data' in body)) {
-      return reject(body);
-    }
+      // http://facebook.github.io/graphql/October2016/#sec-Errors
+      if ('errors' in body || !('data' in body)) {
+        return reject(body);
+      }
 
-    return resolve(body);
-  })),
-});
+      return resolve(body);
+    })),
+  };
+};
