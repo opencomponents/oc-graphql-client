@@ -1,6 +1,8 @@
 oc-graphql-client [![Build Status](https://travis-ci.org/opencomponents/oc-graphql-client.svg?branch=master)](https://travis-ci.org/opencomponents/oc-graphql-client)
 ==========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/opencomponents/oc-graphql-client.svg)](https://greenkeeper.io/)
+
 ## NOTICE!
 - The current released version (3.*) does not use the Apollo client due to memory consumption issues.
 - The client does not expose a querybuilder, instead just use a raw string as the examples does.
