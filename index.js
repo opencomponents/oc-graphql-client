@@ -18,7 +18,7 @@ module.exports.execute = () => ({
     body: {
       query: options.query,
       variables: options.variables,
-      operationName: null,
+      operationName: options.operationName ? options.operationName : null,
     },
     headers: _.extend({ 'User-Agent': 'oc' }, headers),
     json: true,
