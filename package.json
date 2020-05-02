@@ -11,11 +11,14 @@
   },
   "scripts": {
     "lint": "eslint index.js",
-    "test": "npm run lint && mocha tests"
+    "test": "npm run lint && mocha tests",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "snyk": "^1.316.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -27,5 +30,6 @@
     "injectr": "^0.5.1",
     "mocha": "^6.1.4",
     "sinon": "^1.17.7"
-  }
+  },
+  "snyk": true
 }
